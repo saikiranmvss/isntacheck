@@ -1,12 +1,11 @@
 const express = require('express');
 const axios = require('axios');
+const cors = require('cors');
 const app = express();
 
 app.use(express.json());
-
-const cors = require('cors');
 app.use(cors({
-  origin: 'https://test-235b1.web.app' // or use '*' to allow all origins
+  origin: 'https://test-235b1.web.app'  // Adjust according to your front-end URL
 }));
 
 const instagramClientId = '1421335018587943';
@@ -16,8 +15,9 @@ const redirectUri = 'https://test-235b1.web.app/fbauth';
 app.post('/exchange-code', async (req, res) => {
   const { code } = req.body;
   const tokenUrl = 'https://api.instagram.com/oauth/access_token';
-  
+
   try {
+    // Exchange code for access token
     const tokenResponse = await axios.post(tokenUrl, new URLSearchParams({
       client_id: instagramClientId,
       client_secret: instagramClientSecret,
@@ -28,19 +28,25 @@ app.post('/exchange-code', async (req, res) => {
 
     const accessToken = tokenResponse.data.access_token;
     const userId = tokenResponse.data.user_id;
-    console.log('user_id'+userId);
 
-    // Now fetch additional user details using the access token and user ID
-    const userDetailsUrl = `https://graph.instagram.com/11.0/${userId}?fields=id,username,media_count&access_token=${accessToken}`;
+    // Fetch user details using the Graph API
+    const apiVersion = 'v19.0';  // Ensure you're using the correct API version
+    const fields = 'id,username,account_type,media_count';
+    const userDetailsUrl = `https://graph.instagram.com/${apiVersion}/${userId}?fields=${fields}&access_token=${accessToken}`;
+
     const userDetailsResponse = await axios.get(userDetailsUrl);
 
-    // Combine user details with access token info and send it back to the client
+    // Send user details back to the client
     res.json({
-      accessToken,
+      accessToken: accessToken,
       userDetails: userDetailsResponse.data
     });
   } catch (error) {
     console.error('Error fetching access token or user details:', error);
+    res.status(500).send({
+      message: 'Failed to fetch access token or user details',
+      error: error.response ? error.response.data : error.message
+    });
   }
 });
 
