@@ -18,7 +18,7 @@ app.post('/exchange-code', async (req, res) => {
   const tokenUrl = 'https://api.instagram.com/oauth/access_token';
   
   try {
-    const response = await axios.post(tokenUrl, new URLSearchParams({
+    const tokenResponse = await axios.post(tokenUrl, new URLSearchParams({
       client_id: instagramClientId,
       client_secret: instagramClientSecret,
       grant_type: 'authorization_code',
@@ -26,10 +26,21 @@ app.post('/exchange-code', async (req, res) => {
       code: code
     }));
 
-    res.json(response.data);
+    const accessToken = tokenResponse.data.access_token;
+    const userId = tokenResponse.data.user_id;
+
+    // Now fetch additional user details using the access token and user ID
+    const userDetailsUrl = `https://graph.instagram.com/${userId}?fields=id,username,media_count&access_token=${accessToken}`;
+    const userDetailsResponse = await axios.get(userDetailsUrl);
+
+    // Combine user details with access token info and send it back to the client
+    res.json({
+      accessToken,
+      userDetails: userDetailsResponse.data
+    });
   } catch (error) {
-    console.error('Error fetching access token:', error);
-    res.status(500).send('Failed to fetch access token');
+    console.error('Error fetching access token or user details:', error);
+    res.status(500).send('Failed to fetch access token or user details');
   }
 });
 
