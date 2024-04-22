@@ -30,7 +30,7 @@ app.post('/exchange-code', async (req, res) => {
     const userId = tokenResponse.data.user_id;
 
     // Ensure you're using the correct API version
-    const apiVersion = 'v19.0'; 
+    const apiVersion = 'v11.0'; 
     const fields = 'id,username,account_type,media_count';
     const userDetailsUrl = `https://graph.instagram.com/${apiVersion}/${userId}?fields=${fields}&access_token=${accessToken}`;
 
