@@ -4,6 +4,11 @@ const app = express();
 
 app.use(express.json());
 
+const cors = require('cors');
+app.use(cors({
+  origin: 'https://test-235b1.web.app' // or use '*' to allow all origins
+}));
+
 const instagramClientId = '1421335018587943';
 const instagramClientSecret = '293ef37b66b6d7157db8a99c2fa584d0';
 const redirectUri = 'https://test-235b1.web.app/fbauth';
