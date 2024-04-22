@@ -28,9 +28,10 @@ app.post('/exchange-code', async (req, res) => {
 
     const accessToken = tokenResponse.data.access_token;
     const userId = tokenResponse.data.user_id;
-console.log('user_id'+userId);
+    console.log('user_id'+userId);
+
     // Now fetch additional user details using the access token and user ID
-    const userDetailsUrl = `https://graph.instagram.com/${userId}?fields=id,username,media_count&access_token=${accessToken}`;
+    const userDetailsUrl = `https://graph.instagram.com/11.0/${userId}?fields=id,username,media_count&access_token=${accessToken}`;
     const userDetailsResponse = await axios.get(userDetailsUrl);
 
     // Combine user details with access token info and send it back to the client
@@ -40,7 +41,6 @@ console.log('user_id'+userId);
     });
   } catch (error) {
     console.error('Error fetching access token or user details:', error);
-    res.status(500).send('Failed to fetch access token or user details');
   }
 });
 
