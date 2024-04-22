@@ -32,7 +32,7 @@ app.post('/exchange-code', async (req, res) => {
     // Ensure you're using the correct API version
     const apiVersion = 'v11.0'; 
     const fields = 'id,username,account_type,media_count';
-    const userDetailsUrl = `https://graph.instagram.com/${apiVersion}/${userId}?fields=${fields}&access_token=${accessToken}`;
+    const userDetailsUrl = `https://graph.instagram.com/${userId}?fields=${fields}&access_token=${accessToken}`;
 
     // Fetch user details using the Graph API
     const userDetailsResponse = await axios.get(userDetailsUrl);
